@@ -55,7 +55,7 @@ const NewsTab = () => {
           </div>
         ))
       )}
-      <Link href="/add-news" className="fixed bottom-20 left-4 bg-orange-500 text-white py-2 px-4 text-2xl rounded-full">
+      <Link href="/addNews" className="fixed bottom-20 left-4 bg-orange-500 text-white py-2 px-4 text-2xl rounded-full">
         +
       </Link>
     
