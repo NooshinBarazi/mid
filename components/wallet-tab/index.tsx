@@ -11,7 +11,8 @@ type Plan = {
 
 const WalletTab = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedWallet, setSelectedWallet] = useState({ price: 0, imageUrl: '', count: 0 });
+  const [selectedWallet, setSelectedWallet] = useState<any>(    { price: 100, image: '/assets/images/car-gray.jpg', numbers: 10 },
+  );
 
   const plans: Plan[] = [
     { price: 100, image: '/assets/images/car-gray.jpg', numbers: 10 },
@@ -19,7 +20,7 @@ const WalletTab = () => {
     { price: 300, image: '/assets/images/car-gray.jpg', numbers: 30 },
   ];
 
-  const openModal = (walletItem: {price: number; imageUrl: string; count: number }) => {
+  const openModal = (walletItem: Plan) => {
     setSelectedWallet(walletItem);
     setModalIsOpen(true);
   };
@@ -39,13 +40,13 @@ const WalletTab = () => {
         <div className="grid lg:grid-cols-4 gap-4">
           {plans && plans.map((walletItem: Plan) => (
             <div
-              className="bg-gray-100 rounded-lg overflow-hidden h-48 w-42 flex flex-col justify-around items-center"
+              className="bg-gray-100 rounded-lg overflow-hidden h-48 w-42 flex flex-col justify-around items-center cursor-pointer"
               key={walletItem.price}
               onClick={() => openModal(walletItem as any)}
             >
               <img
                    src={walletItem.image}
-                   alt={walletItem.numbers.toString()}
+                   alt={`imagenumber${walletItem.numbers}`}
               />
               <div className="flex flex-col items-center">
                 <p className="text-xs">قیمت </p>

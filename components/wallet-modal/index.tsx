@@ -6,12 +6,15 @@ interface WalletModalProps {
   onRequestClose: () => void;
   walletData: {
     price: number;
-    imageUrl: string;
-    count: number;
+    image: string;
+    numbers: number;
   };
 }
 
 const customStyles = {
+    overlay: {
+        zIndex: 1000, // Ensure this is high enough to be on top of other content
+      },
   content: {
     top: '50%',
     left: '50%',
@@ -41,8 +44,8 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose, walle
       contentLabel="Wallet Modal"
     >
       <div className="flex flex-col items-center">
-        <img src={walletData.imageUrl} alt={walletData.count.toString()} className="object-cover my-4" />
-        <p>{walletData.count} عکس</p>
+        <img src={walletData.image} alt={`imagenumber${walletData.numbers}`} className="object-cover my-4" />
+        <p>{walletData.numbers} عکس</p>
         <div className="flex items-center my-4">
           <button onClick={decreaseQuantity} className="px-3 py-1 bg-gray-300 rounded">-</button>
           <span className="mx-4">{quantity}</span>
