@@ -2,6 +2,7 @@ import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import ImageTab from "@/components/image-tab";
 import InfoTab from "@/components/info-tab";
+import WalletTab from "@/components/wallet-tab";
 
 export default function Profile() {
   return (
@@ -49,7 +50,7 @@ export default function Profile() {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-6"
           >
-            Tab content 3
+            <WalletTab />
           </div>
 
           <input
