@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import localFont from "next/font/local";
 import ReduxProvider from "@/redux/provider";
-
+import AppLayout from "@/components/app-layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -57,9 +57,9 @@ export default function RootLayout({
     <html dir="rtl" className={`${iranyekan.variable} ${inter.className}`}>
       <body>
         <ReduxProvider>
-        {children}
+          <AppLayout>{children}</AppLayout>
         </ReduxProvider>
-        </body>
+      </body>
     </html>
   );
 }
