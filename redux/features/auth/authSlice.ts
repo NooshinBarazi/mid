@@ -1,5 +1,5 @@
-import { axiosInstanceUnauth } from "@/core/http-service";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 interface AuthState {
   access: string | null;
@@ -15,11 +15,25 @@ const initialState: AuthState = {
   error: null,
 };
 
+export const login = createAsyncThunk(
+  "auth/login",
+  async (data: any, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/users/sign-in/`, data);
+      console.log('re log', res)
+
+      return res;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 export const signUp = createAsyncThunk(
   "auth/signUp",
   async (data: any, { rejectWithValue }) => {
     try {
-      const res = await axiosInstanceUnauth.post("/users/auth/", data);
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/users/auth/`, data);
       localStorage.setItem("token", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
 
@@ -31,19 +45,6 @@ export const signUp = createAsyncThunk(
   }
 );
 
-export const login = createAsyncThunk(
-  "auth/login",
-  async (data: any, { rejectWithValue }) => {
-    try {
-      const res = await axiosInstanceUnauth.post("/users/sign-in/", data);
-      console.log('re log', res)
-
-      return res;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data || error.message);
-    }
-  }
-);
 
 export const refreshToken = createAsyncThunk(
   "auth/refreshToken",
@@ -52,7 +53,7 @@ export const refreshToken = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const res = await axiosInstanceUnauth.post("/users/token/refresh/", {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/users/token/refresh/`, {
         refresh,
         access,
       });

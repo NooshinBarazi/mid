@@ -1,14 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./features/auth/authSlice";
+import authSlice from "./features/auth/authSlice";
 
+console.log('authSlice', authSlice);
 
-export const store = configureStore({
+ const store = configureStore({
   reducer: {
-    auth: authReducer
+   auth: authSlice
   }
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+export default store;
 
 

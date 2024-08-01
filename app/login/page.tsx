@@ -1,15 +1,37 @@
 "use client";
+import { login, setToken, signUp } from "@/redux/features/auth/authSlice";
+import { AppDispatch } from "@/redux/store";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 export default function Login() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, watch } = useForm();
+  const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
 
-  const onSubmit = () => {
+  const onSubmit = (data: any) => {
     console.log("onsubmit login");
     setIsModalOpen(true);
+    dispatch(login({phone_number: data.phoneNumber}))
+  };
+
+  const authHandler = async () => {
+    setIsModalOpen(false);
+     const code= watch("code");
+      const phoneNumber =  watch("phoneNumber");
+    try {
+      const response = await dispatch(signUp({code: code, phone_number: phoneNumber}));
+      if (response.payload.access) {
+        setToken(response.payload.access);
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+    }
   };
 
   return (

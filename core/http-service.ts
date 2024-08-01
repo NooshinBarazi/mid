@@ -1,16 +1,10 @@
 import { refreshToken } from "@/redux/features/auth/authSlice";
-import { store } from "@/redux/store";
+import  store  from "@/redux/store";
 import axios from "axios";
 
-const axiosInstanceUnauth = axios.create({
-  baseURL: "http://130.185.72.93:8000",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
 
 const axiosInstance = axios.create({
-  baseURL: "http://130.185.72.93:8000",
+  baseURL: "https://api.midstyles.com",
   headers: {
     "Content-Type": "application/json",
   },
@@ -39,7 +33,6 @@ axiosInstance.interceptors.response.use(
       const token = localStorage.getItem("token");
       if (token && refresh) {
         try {
-          
           const result = await store
             .dispatch(refreshToken({ access: token, refresh }))
             .unwrap();
@@ -69,4 +62,3 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
-export { axiosInstanceUnauth };
