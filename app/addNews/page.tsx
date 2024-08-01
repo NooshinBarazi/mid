@@ -38,7 +38,6 @@ export default function AddNews() {
               className="w-full mb-4 p-2 "
               accept="image/*"
             />
-            {/* </div> */}
             <button
               type="submit"
               className="bg-orange-500 text-white py-2 px-8 rounded"
