@@ -1,19 +1,29 @@
 "use client";
-import { useState } from "react";
+import { fetchUser, updateUser } from "@/redux/features/user/userSlice";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 
 const InfoTab = () => {
-  const [user, setUser] = useState({
-    first_name: "John",
-    last_name: "",
-    date_of_birth: "",
-    email: "",
-  });
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>([""]);
   const { register, handleSubmit } = useForm();
+  const user = useSelector((state: RootState) => state.user.user);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const onSubmit = () => {
-    console.log("onSubmit");
+  useEffect(() => {
+      dispatch(fetchUser());
+  }, []);
+
+  const onSubmit = async (data: any) => {
+    await dispatch(
+      updateUser({
+        first_name: data.first_name || user?.first_name,
+        last_name: data.last_name || user?.last_name,
+        email: data.email || user?.email,
+        date_of_birth: data.date_of_birth || user?.date_of_birth,
+      })
+    );
   };
 
   const handleAddPhoneNumber = () => {
@@ -69,7 +79,7 @@ const InfoTab = () => {
         <input
           {...register("email", { value: user?.email })}
           className="input input-bordered input-warning w-full max-w-xs"
-          value={user?.email}
+          // value={user?.email}
         />
       </div>
       <div className="mb-4 flex gap-2">
@@ -77,7 +87,10 @@ const InfoTab = () => {
           شماره دوستان:
         </label>
         {phoneNumbers.map((phoneNumber, index) => (
-          <div key={index} className="mb-4 flex justify-start items-center gap-2 flex-grow">
+          <div
+            key={index}
+            className="mb-4 flex justify-start items-center gap-2 flex-grow"
+          >
             <input
               className="input input-bordered input-warning w-full max-w-xs"
               type="text"
@@ -105,10 +118,7 @@ const InfoTab = () => {
       </div>
       <div className="flex justify-center w-full">
         <div className="w-full max-w-xs lg:ml-32">
-          <button
-            type="submit"
-            className="btn btn-success w-full"
-          >
+          <button type="submit" className="btn btn-success w-full">
             ارسال
           </button>
         </div>

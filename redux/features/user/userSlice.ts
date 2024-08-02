@@ -41,7 +41,9 @@ export const updateUser = createAsyncThunk(
   "user/updateUser",
   async (data: User, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/users/`, data);
+      const token =  Cookies.get('token');
+      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/users/`, data, {headers});
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);

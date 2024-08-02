@@ -18,7 +18,7 @@ export default function News() {
             </p>
           ) : (
             news.map((item) => (
-              <div className="collapse collapse-arrow bg-gray-50">
+              <div className="collapse collapse-arrow bg-gray-50" key={item.title}>
                 <input type="radio" name="my-accordion-2" defaultChecked />
                 <div className="collapse-title text-xl font-medium">
                   {item.title}
