@@ -1,14 +1,38 @@
+"use client";
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
+import { fetchUser } from "@/redux/features/user/userSlice";
+import { AppDispatch } from "@/redux/store";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect } from "react";
 import {
   ReactCompareSlider,
   ReactCompareSliderImage,
 } from "react-compare-slider";
 import { FaArrowRight } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    const fetchPerson = async () => {
+      const response = await dispatch(fetchUser());
+      if (response.payload) {
+        const { first_name, last_name, phone_number, date_of_birth } =
+          response.payload;
+        if (!first_name || !last_name || !phone_number || !date_of_birth) {
+          toast(
+            "اطلاعات پروفایل شما کامل نیست، لطفا به پروفایل رفته و اطلاعات خود را تکمیل کنید."
+          );
+        }
+      }
+    };
+    fetchPerson();
+  }, [dispatch]);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between">
       <Header />
@@ -151,7 +175,7 @@ export default function Home() {
               <h2 className="text-right font-bold text-2xl mb-5 mt-10">
                 فروشگاه
               </h2>
-              <Link href="/shoping">
+              <Link href="/shopping">
                 <p className="text-orange-500">بیشتر</p>
               </Link>
             </div>{" "}
