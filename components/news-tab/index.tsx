@@ -5,12 +5,9 @@ import NewsModal from "../news-modal";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { deleteNews, fetchNews, fetchNewsById, updateNews } from "@/redux/features/news/newsSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-type NewsItem = {
-  id: number;
-  title: string;
-  description: string;
-};
 
 const NewsTab = () => {
   const [selectedNews, setSelectedNews] = useState<any>();
@@ -45,6 +42,8 @@ const NewsTab = () => {
          if (updateNews.fulfilled.match(res)) {
            setSelectedNews(res.payload);
            setIsModalVisible(false);
+           toast("خبر با موفقیت ویرایش شد");
+           dispatch(fetchNews());
          } else {
            console.error("Failed to update news:", res.error.message);
          }
@@ -56,6 +55,8 @@ const NewsTab = () => {
          const res = await dispatch(deleteNews(selectedNews.id));
          if (deleteNews.fulfilled.match(res)) {
            handleCloseModal();
+           toast("خبر با موفقیت حذف شد");
+           dispatch(fetchNews());
          } else {
            console.error("Failed to delete news:", res.error.message);
          }

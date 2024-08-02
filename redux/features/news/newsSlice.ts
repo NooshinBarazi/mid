@@ -165,7 +165,6 @@ const newsSlice = createSlice({
         fetchNewsById.fulfilled,
         (state, action: PayloadAction<News>) => {
           state.loading = false;
-          state.news = [action.payload]; // Assuming you want to replace with specific news
           state.error = null;
         }
       )
