@@ -3,6 +3,7 @@ import authSlice from "./features/auth/authSlice";
 import userSlice from "./features/user/userSlice";
 import imagesSlice from "./features/images/imagesSlice";
 import plansSlice from "./features/plans/plansSlice";
+import newsSlice from "./features/news/newsSlice";
 
 console.log('userSlice', userSlice);
 
@@ -12,6 +13,7 @@ console.log('userSlice', userSlice);
    user: userSlice,
    images: imagesSlice,
    plans: plansSlice,
+   news: newsSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat()
 });

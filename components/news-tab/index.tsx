@@ -1,7 +1,10 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NewsModal from "../news-modal";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { deleteNews, fetchNews, fetchNewsById, updateNews } from "@/redux/features/news/newsSlice";
 
 type NewsItem = {
   id: number;
@@ -12,17 +15,21 @@ type NewsItem = {
 const NewsTab = () => {
   const [selectedNews, setSelectedNews] = useState<any>();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const news = useSelector((state: RootState) => state.news.news);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const news: NewsItem[] = [
-    { id: 1, title: "خبر اول", description: "توضیحات خبر اول." },
-    { id: 2, title: "خبر دوم", description: "توضیحات خبر دوم." },
-    { id: 3, title: "خبر سوم", description: "توضیحات خبر سوم." },
-  ];
+  useEffect(() => {
+       dispatch(fetchNews());
+  }, []);
 
   const handleNewsClick = async (newsItem: any) => {
-    setSelectedNews(newsItem);
-    setIsModalVisible(true);
-
+       const res = await dispatch(fetchNewsById(newsItem.id));
+       if (fetchNewsById.fulfilled.match(res)) {
+         setSelectedNews(res.payload);
+         setIsModalVisible(true);
+       } else {
+         console.error("Failed to fetch news by id:", res.error.message);
+       }
   };
 
   const handleCloseModal = () => {
@@ -30,9 +37,30 @@ const NewsTab = () => {
     setSelectedNews(null);
   };
 
-  const handleEditNews = async (updatedNews: any) => {};
+  const handleEditNews = async (updatedNews: any) => {
+       if (selectedNews) {
+         const res = await dispatch(
+           updateNews({ id: selectedNews.id, updatedNews })
+         );
+         if (updateNews.fulfilled.match(res)) {
+           setSelectedNews(res.payload);
+           setIsModalVisible(false);
+         } else {
+           console.error("Failed to update news:", res.error.message);
+         }
+       }
+  };
 
-  const handleDeleteNews = async () => {};
+  const handleDeleteNews = async () => {
+       if (selectedNews) {
+         const res = await dispatch(deleteNews(selectedNews.id));
+         if (deleteNews.fulfilled.match(res)) {
+           handleCloseModal();
+         } else {
+           console.error("Failed to delete news:", res.error.message);
+         }
+       }
+  };
 
   return (
     <div className="flex flex-col gap-4">
