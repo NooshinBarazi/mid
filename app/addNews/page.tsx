@@ -1,13 +1,35 @@
 'use client'
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
+import { addNews } from "@/redux/features/news/newsSlice";
+import { AppDispatch } from "@/redux/store";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 export default function AddNews() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset} = useForm();
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
-  const onSubmit = () =>{
-    console.log("onSubmit add  newa")
+  const onSubmit = async(data: any) =>{
+       const formData = new FormData();
+       formData.append("title", data.title);
+       formData.append("description", data.description);
+       if (data.image.length > 0) {
+         formData.append("image", data.image[0]);
+       } else {
+         console.error("No image file selected.");
+         return;
+       }
+
+       const res = await dispatch(addNews(formData));
+       if (addNews.fulfilled.match(res)) {
+         reset();
+         router.push("/profile");
+       } else {
+         console.error("Failed to add news:", res.error.message);
+       }
   }
 
   return (
