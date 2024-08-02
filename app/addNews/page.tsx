@@ -6,6 +6,9 @@ import { AppDispatch } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function AddNews() {
   const { register, handleSubmit, reset} = useForm();
@@ -16,15 +19,16 @@ export default function AddNews() {
        const formData = new FormData();
        formData.append("title", data.title);
        formData.append("description", data.description);
-       if (data.image.length > 0) {
+       if (data.image && data.image[0]) {
          formData.append("image", data.image[0]);
        } else {
          console.error("No image file selected.");
          return;
        }
 
-       const res = await dispatch(addNews(formData));
+       const res = await dispatch(addNews(formData)).unwrap();
        if (addNews.fulfilled.match(res)) {
+        toast('خبر با موفقیت اضافه شد')
          reset();
          router.push("/profile");
        } else {
