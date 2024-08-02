@@ -4,6 +4,9 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const InfoTab = () => {
   const [phoneNumbers, setPhoneNumbers] = useState<string[]>([""]);
@@ -16,7 +19,7 @@ const InfoTab = () => {
   }, []);
 
   const onSubmit = async (data: any) => {
-    await dispatch(
+   const res = await dispatch(
       updateUser({
         first_name: data.first_name || user?.first_name,
         last_name: data.last_name || user?.last_name,
@@ -24,6 +27,11 @@ const InfoTab = () => {
         date_of_birth: data.date_of_birth || user?.date_of_birth,
       })
     );
+        if (updateUser.fulfilled.match(res)) {
+          toast('اطلاعات با موفقیت ویرایش شد')
+        } else {
+          console.error("Failed to update user:", res.error.message);
+        }
   };
 
   const handleAddPhoneNumber = () => {
