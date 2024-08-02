@@ -96,7 +96,7 @@ export default function Login() {
             />
             <button
               className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"
-              //   onClick={authHandler}
+              onClick={authHandler}
             >
               ارسال
             </button>

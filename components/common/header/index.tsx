@@ -1,7 +1,28 @@
-'use client'
+"use client";
+import { RootState } from "@/redux/store";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import Cookies from 'js-cookie';
 import Image from "next/image";
+import Link from "next/link";
+
 
 const Header = () => {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const authState = useSelector((state: RootState) => state.auth);
+  const router = useRouter();
+
+  useEffect(() => {
+    const tokenFromCookies = Cookies.get("token");
+    setAccessToken(authState.access || tokenFromCookies || null);
+  }, [authState.access]);
+
+  const handleProfileClick = () => {
+    if (accessToken) {
+      router.push("/profile");
+    }
+  };
 
   const navigateToEditImage = () => {
     // router.push("/edit-image");
@@ -11,23 +32,29 @@ const Header = () => {
   return (
     <header className="w-full flex justify-between bg-white items-center p-4 border-b">
       <div className="hidden md:flex items-center relative">
-          <div className="dropdown dropdown-bottom">
-            <div tabIndex={0} role="button" className="btn m-1 rounded-full">
-              پروفایل
-            </div>
+        <div className="dropdown dropdown-bottom">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn m-1 rounded-full"
+            onClick={handleProfileClick}
+          >
+            پروفایل
+          </div>
+          {!accessToken && (
             <ul
               tabIndex={0}
               className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
             >
               <li>
-                <a href="/login">ورود</a>
+                <Link href="/login">ورود</Link>
               </li>
               <li>
-                <a href="/register">ثبت نام</a>
+                <Link href="/register">ثبت نام</Link>
               </li>
             </ul>
-          </div>
- 
+          )}
+        </div>
       </div>
       <div className="hidden md:flex">
         <label

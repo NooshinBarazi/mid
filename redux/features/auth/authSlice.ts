@@ -1,5 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 interface AuthState {
   access: string | null;
@@ -20,7 +21,6 @@ export const login = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/users/sign-in/`, data);
-      console.log('re log', res)
 
       return res;
     } catch (error: any) {
@@ -34,10 +34,10 @@ export const signUp = createAsyncThunk(
   async (data: any, { rejectWithValue }) => {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/users/auth/`, data);
-      localStorage.setItem("token", res.data.access);
-      localStorage.setItem("refresh", res.data.refresh);
 
-      console.log('re sig', res)
+      Cookies.set('token', res.data.access);
+      Cookies.set('refresh', res.data.refresh);
+
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
@@ -88,8 +88,8 @@ const authSlice = createSlice({
         state.access = action.payload.access;
         state.refresh = action.payload.refresh;
         state.error = null;
-        localStorage.setItem("token", action.payload.access);
-        localStorage.setItem("refresh", action.payload.refresh);
+        Cookies.set('token', action.payload.access);
+        Cookies.set('refresh', action.payload.refresh);
       })
       .addCase(signUp.rejected, (state, action) => {
         state.loading = false;

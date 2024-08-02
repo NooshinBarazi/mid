@@ -1,6 +1,7 @@
 import axiosInstance from "@/core/http-service";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 interface UserState {
   user: User | null;
@@ -26,8 +27,8 @@ export const fetchUser = createAsyncThunk(
   "user/fetchUser",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const token =  Cookies.get('token');
+      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
       const res = await axiosInstance.get('/users/', { headers });
       return res.data;
     } catch (error: any) {
