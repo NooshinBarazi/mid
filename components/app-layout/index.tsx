@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AppDispatch, RootState } from "@/redux/store";
 import { refreshToken } from "@/redux/features/auth/authSlice";
 import { ToastContainer } from "react-toastify";
+import Cookies from 'js-cookie';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -13,13 +14,19 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
+    const token = Cookies.get('token');
+    const refresh = Cookies.get('refresh');
+
     const interval = setInterval(async () => {
-      if (authState.access && authState.refresh) {
+      const accessToken = authState.access || token;
+      const refreshTokenValue  = authState.refresh || refresh;
+
+      if (accessToken && refreshTokenValue ) {
         try {
           const response = await dispatch(
             refreshToken({
-              refresh: authState.refresh,
-              access: authState.access!,
+              refresh: refreshTokenValue ,
+              access: accessToken,
             })
           ).unwrap();
 
