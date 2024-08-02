@@ -23,7 +23,7 @@ const ImageTab = () => {
             </p>
           ) : (
             images.map((image, index) => (
-              <div className="carousel-item flex justify-center items-center gap-4" key={index}>
+              <div className="carousel-item" key={index}>
                 <div className="bg-gray-200 rounded-lg overflow-hidden h-48 w-48 flex justify-center items-center">
                   <img
                     src={image}

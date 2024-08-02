@@ -1,24 +1,29 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import WalletModal from "../wallet-modal";
-
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { fetchPlans } from "@/redux/features/plans/plansSlice";
 
 type Plan = {
   price: number;
-  image: string; 
+  image: string;
   numbers: number;
 };
 
 const WalletTab = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedWallet, setSelectedWallet] = useState<any>(    { price: 100, image: '/assets/images/car-gray.jpg', numbers: 10 },
-  );
+  const [selectedWallet, setSelectedWallet] = useState<any>({
+    price: 100,
+    image: "/assets/images/car-gray.jpg",
+    numbers: 10,
+  });
+  const { plans } = useSelector((state: RootState) => state.plans);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const plans: Plan[] = [
-    { price: 100, image: '/assets/images/car-gray.jpg', numbers: 10 },
-    { price: 200, image: '/assets/images/car-gray.jpg', numbers: 20 },
-    { price: 300, image: '/assets/images/car-gray.jpg', numbers: 30 },
-  ];
+  useEffect(() => {
+    dispatch(fetchPlans());
+  }, [dispatch]);
 
   const openModal = (walletItem: Plan) => {
     setSelectedWallet(walletItem);
@@ -29,7 +34,6 @@ const WalletTab = () => {
     setModalIsOpen(false);
   };
 
-
   return (
     <div>
       <p className="mb-12">موجودی: 10 عکس</p>
@@ -38,22 +42,23 @@ const WalletTab = () => {
         <hr className="mb-12 mt-2 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
 
         <div className="grid lg:grid-cols-4 gap-4">
-          {plans && plans.map((walletItem: Plan) => (
-            <div
-              className="bg-gray-100 rounded-lg overflow-hidden h-48 w-42 flex flex-col justify-around items-center cursor-pointer"
-              key={walletItem.price}
-              onClick={() => openModal(walletItem as any)}
-            >
-              <img
-                   src={walletItem.image}
-                   alt={`imagenumber${walletItem.numbers}`}
-              />
-              <div className="flex flex-col items-center">
-                <p className="text-xs">قیمت </p>
-                <p className="text-sm">{walletItem.price} تومان</p>
+          {plans &&
+            plans.map((walletItem: Plan) => (
+              <div
+                className="bg-gray-100 rounded-lg overflow-hidden h-48 w-42 flex flex-col justify-around items-center cursor-pointer"
+                key={walletItem.price}
+                onClick={() => openModal(walletItem as any)}
+              >
+                <img
+                  src={walletItem.image}
+                  alt={`imagenumber${walletItem.numbers}`}
+                />
+                <div className="flex flex-col items-center">
+                  <p className="text-xs">قیمت </p>
+                  <p className="text-sm">{walletItem.price} تومان</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
       <div className="mt-12">
@@ -79,7 +84,8 @@ const WalletTab = () => {
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th
                   scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                >
                   Apple MacBook Pro 17
                 </th>
                 <td className="px-6 py-4">Silver</td>

@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "./features/auth/authSlice";
 import userSlice from "./features/user/userSlice";
 import imagesSlice from "./features/images/imagesSlice";
+import plansSlice from "./features/plans/plansSlice";
 
 console.log('userSlice', userSlice);
 
@@ -10,6 +11,7 @@ console.log('userSlice', userSlice);
    auth: authSlice,
    user: userSlice,
    images: imagesSlice,
+   plans: plansSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat()
 });
