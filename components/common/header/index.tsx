@@ -25,8 +25,7 @@ const Header = () => {
   };
 
   const navigateToEditImage = () => {
-    // router.push("/edit-image");
-    // setIsMenuOpen(false);
+    router.push("/editImage");
   };
 
   return (
