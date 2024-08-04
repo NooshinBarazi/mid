@@ -5,6 +5,7 @@ import { refreshToken } from "./redux/features/auth/authSlice";
 export async function middleware(request: NextRequest) {
   const tokenCookie = request.cookies.get("token");
   const refreshCookie = request.cookies.get("refresh");
+  
 
   const token = tokenCookie?.value;
   const refresh = refreshCookie?.value;

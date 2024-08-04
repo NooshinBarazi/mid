@@ -43,9 +43,7 @@ export const fetchImages = createAsyncThunk(
   "images/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
-      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
-      const res = await axiosInstance.get("/images/", { headers });
+      const res = await axiosInstance.get("/images/");
       console.log("fetch image suces", res.data);
       return res.data;
     } catch (error: any) {
@@ -71,11 +69,14 @@ export const changeColor = createAsyncThunk(
 
 export const enhanceImageQuality = createAsyncThunk(
   "images/enhanceQuality",
-  async ({ qualityData }: EnhanceImageQualityPayload, { rejectWithValue }) => {
+  async ({ qualityData }: any, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post(
         `/images/enhance-image-quality/`,
-        qualityData
+        qualityData,
+      {  headers: {
+          'Content-Type': 'multipart/form-data'
+        }}
       );
       return res.data;
     } catch (error: any) {
@@ -101,11 +102,14 @@ export const overlayImage = createAsyncThunk(
 
 export const removeBackground = createAsyncThunk(
   "images/removeBackground",
-  async ({ backgroundData }: RemoveBackgroundPayload, { rejectWithValue }) => {
+  async ({ backgroundData }: any, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post(
         `/images/remove-background/`,
-        backgroundData
+        backgroundData,
+        {  headers: {
+          'Content-Type': 'multipart/form-data'
+        }}
       );
       return res.data;
     } catch (error: any) {

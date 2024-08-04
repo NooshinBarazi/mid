@@ -24,10 +24,7 @@ const MainImageArea = ({
   isEnhanceChecked,
   handleCheckboxChange,
 }: any) => {
-  // if (!imageSrc) {
-  //   return <div>No image uploaded</div>;
-  // }
-
+ 
   const style = {
     transform: `scaleX(${imageTransform.scaleX}) scaleY(${imageTransform.scaleY}) rotate(${imageTransform.rotate}deg)`,
     transition: "transform 0.3s ease",

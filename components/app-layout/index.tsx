@@ -41,7 +41,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }, 3600000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [authState.access, authState.refresh, dispatch, router]);
 
   return (
     <>

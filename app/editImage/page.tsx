@@ -1,28 +1,33 @@
 "use client"
-
 import FlipIcon from "@/components/common/icons/flipIcon";
 import UndoIcon from "@/components/common/icons/undoIcon";
 import ZoomIcon from "@/components/common/icons/zoomIcon";
 import MainImageArea from "@/components/main-image-area";
 import RightSidebar from "@/components/right-sidebar";
 import Sidebar from "@/components/sidebar";
+import { enhanceImageQuality, removeBackground } from "@/redux/features/images/imagesSlice";
 import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-// import { enhanceImageQuality, removeBackground } from "@/redux/features/images";
-// import Sidebar from "../components/sidebar";
-// import MainImageArea from "../components/main-image-area";
-// import RightSidebar from "../components/right-sidebar";
-// import UndoIcon from "../components/icons/undoIcon";
-// import ZoomIcon from "../components/icons/zoomIcon";
-// import FlipIcon from "../components/icons/flipIcon";
 
-interface RemoveBackgroundPayload {
-  backgroundData: File;
-}
+const dataURLtoFile = (dataurl: string, filename: string) => {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)![1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+};
 
-interface EnhanceImageQualityPayload {
-  qualityData: File;
-}
+const binaryStringToBlob = (binaryString: string, mimeType: string) => {
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: mimeType });
+};
 
 
 export default function EditImage() {
@@ -76,9 +81,7 @@ export default function EditImage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        if (reader.result) {
           setImageSrc(reader.result as string); 
-        }
     }
     reader.readAsDataURL(file);
   }
@@ -124,39 +127,48 @@ export default function EditImage() {
     const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
     checkboxType: string ) => {
-    // const isChecked = event.target.checked;
+    const isChecked = event.target.checked;
+    console.log('Checkbox Type:', checkboxType, 'Checked:', isChecked);
 
-    // if (checkboxType === "background") {
-    //   setIsBackgroundChecked(isChecked);
-    // } else if (checkboxType === "enhance") {
-    //   setIsEnhanceChecked(isChecked);
-    // }
+    if (!imageSrc) {
+        console.error('No file selected');
+        alert('Please select an image first.');
+        return;
+    }
 
-    // if (
-    //   !fileInputRef.current ||
-    //   !fileInputRef.current.files ||
-    //   fileInputRef.current.files.length === 0
-    // ) {
-    //   console.error("No file selected");
-    //   return;
-    // }
+    const file = dataURLtoFile(imageSrc, 'image.png');
+    const formData = new FormData();
+    formData.append('image', file);
 
-    // const file = fileInputRef.current.files[0];
+    if (checkboxType === "background") {
+      setIsBackgroundChecked(isChecked);
+    } else if (checkboxType === "enhance") {
+      setIsEnhanceChecked(isChecked);
+    }
 
-    // const formData = new FormData();
-    // formData.append("image", file, file.name);
+    try {
+      if (checkboxType === "background" && isChecked) {
+        const response = await dispatch(removeBackground({backgroundData: formData}) as any);
+       console.log('res remo',response.payload);
+       if (removeBackground.fulfilled.match(response)) {
+        const binaryData = response.payload; // Binary string from API
+        const mimeType = 'image/png'; // Adjust as needed
+        const blob = binaryStringToBlob(binaryData, mimeType);
+        const objectURL = URL.createObjectURL(blob);
+        setImageSrc(objectURL);
 
-    // try {
-    //   if (checkboxType === "background") {
-    //     const payload: RemoveBackgroundPayload = { backgroundData: file };
-    //     await dispatch(removeBackground(payload) as any);
-    //   } else if (checkboxType === "enhance") {
-    //     const payload: EnhanceImageQualityPayload = { qualityData: file };
-    //      await dispatch(enhanceImageQuality(payload) as any);
-    //   }
-    // } catch (error) {
-    //   console.error("Error during API call:", error);
-    // }
+        // Clean up the object URL after the component unmounts
+        return () => URL.revokeObjectURL(objectURL);
+      }
+      } else if (checkboxType === "enhance" && isChecked) {
+        const response = await dispatch(enhanceImageQuality({qualityData: formData}) as any);
+      if (enhanceImageQuality.fulfilled.match(response)) {
+        const enhancedImage = response.payload.enhancedImage;
+        setImageSrc(enhancedImage);
+      }
+    } }catch (error) {
+      console.error("Error during API call:", error);
+    }
   };
 
   const renderSidebarContent = (type: string) => {
@@ -217,6 +229,7 @@ export default function EditImage() {
         handleCheckboxChange={handleCheckboxChange}
         handleDownload={handleDownload}
       />
+ 
 
       {/* Main Image Area */}
       <MainImageArea

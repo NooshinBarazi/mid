@@ -1,6 +1,5 @@
 import axiosInstance from "@/core/http-service";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import Cookies from "js-cookie";
 
 interface AuthState {
   news: News[];
@@ -17,11 +16,6 @@ interface News {
   image: string;
 }
 
-interface AddNewsFormData {
-  title: string;
-  description: string;
-  image: FileList;
-}
 
 const initialState: AuthState = {
   news: [],
@@ -33,9 +27,7 @@ export const fetchNews = createAsyncThunk(
   "news/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
-      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
-      const res = await axiosInstance.get("/news/", { headers });
+      const res = await axiosInstance.get("/news/");
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
@@ -47,13 +39,10 @@ export const addNews = createAsyncThunk(
   "news/add",
   async (data: FormData, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
-      const headers = token
-        ? {
-            Authorization: `"Bearer ${token}"`,
+      const headers =
+         {
             "Content-Type": "multipart/form-data",
-          }
-        : {};
+          };
       const res = await axiosInstance.post("/news/", data, { headers });
       return res.data;
     } catch (error: any) {
@@ -66,9 +55,7 @@ export const fetchNewsById = createAsyncThunk(
   "news/fetchById",
   async (id: number, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
-      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
-      const res = await axiosInstance.get(`/news/${id}/`, { headers });
+      const res = await axiosInstance.get(`/news/${id}/`,);
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
@@ -80,11 +67,7 @@ export const updateNews = createAsyncThunk(
   "news/update",
   async ({ id, updatedNews }: any, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
-      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
-      const res = await axiosInstance.put(`/news/${id}/`, updatedNews, {
-        headers,
-      });
+      const res = await axiosInstance.put(`/news/${id}/`, updatedNews);
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
@@ -99,11 +82,7 @@ export const patchNews = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const token = Cookies.get("token");
-      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
-      const res = await axiosInstance.patch(`/news/${id}/`, partialNews, {
-        headers,
-      });
+      const res = await axiosInstance.patch(`/news/${id}/`, partialNews);
       return res.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
@@ -115,9 +94,7 @@ export const deleteNews = createAsyncThunk(
   "news/delete",
   async (id: number, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
-      const headers = token ? { Authorization: `"Bearer ${token}"` } : {};
-      await axiosInstance.delete(`/news/${id}/`, { headers });
+      await axiosInstance.delete(`/news/${id}/`);
       return id;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || error.message);
@@ -190,7 +167,6 @@ const newsSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to update news";
       })
-      // Patch news by id
       .addCase(patchNews.pending, (state) => {
         state.loading = true;
         state.error = null;
